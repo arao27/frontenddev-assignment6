@@ -1,24 +1,21 @@
-import MovieGrid from '../components/MovieGrid';
+import MovieGrid from "../components/MovieGrid";
 
 function Favorites() {
-  // Placeholder - students will implement localStorage retrieval
-  const favoriteMovies = [];
+  // Load favorites from localStorage
+  const favoriteMovies = JSON.parse(localStorage.getItem("favorites") || "[]");
 
   return (
     <main className="main-content">
       <div className="content-header">
         <h2>My Favorites</h2>
-        <p>Your saved movies collection</p>
-      </div>
-      {favoriteMovies.length > 0 ? (
-        <MovieGrid movies={favoriteMovies} />
-      ) : (
-        <div className="empty-state">
+        {favoriteMovies.length === 0 ? (
           <p>No favorite movies yet. Start adding some from the home page!</p>
-        </div>
-      )}
+        ) : (
+          <MovieGrid movies={favoriteMovies} />
+        )}
+      </div>
     </main>
   );
-};
+}
 
 export default Favorites;

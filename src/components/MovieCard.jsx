@@ -1,9 +1,39 @@
+import { useState, useEffect } from "react";
+
 function MovieCard({ movie }) {
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  // Check localStorage on mount
+  useEffect(() => {
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+    setIsFavorite(favorites.some((f) => f.id === movie.id));
+  }, [movie.id]);
+
+  const toggleFavorite = () => {
+    const favorites = JSON.parse(localStorage.getItem("favorites") || "[]");
+
+    if (isFavorite) {
+      // Remove from favorites
+      const updated = favorites.filter((f) => f.id !== movie.id);
+      localStorage.setItem("favorites", JSON.stringify(updated));
+      setIsFavorite(false);
+    } else {
+      // Add to favorites
+      favorites.push(movie);
+      localStorage.setItem("favorites", JSON.stringify(favorites));
+      setIsFavorite(true);
+    }
+  };
+
   return (
     <div className="movie-card">
       <div className="movie-poster">
-        <img 
-          src="https://placehold.co/300x450/667eea/ffffff?text=Movie+Poster" 
+        <img
+          src={
+            movie.poster_path
+              ? `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+              : "https://placehold.co/300x450/667eea/ffffff?text=No+Poster"
+          }
           alt={movie.title}
         />
       </div>
@@ -11,12 +41,14 @@ function MovieCard({ movie }) {
         <h3 className="movie-title">{movie.title}</h3>
         <div className="movie-details">
           <span className="movie-rating">⭐ {movie.vote_average}</span>
-          <span className="movie-year">{movie.release_date.substring(0, 4)}</span>
+          <span className="movie-year">{movie.release_date?.substring(0, 4)}</span>
         </div>
-        <button className="favorite-button">♡ Add to Favorites</button>
+        <button className="favorite-button" onClick={toggleFavorite}>
+          {isFavorite ? "♥ Remove from Favorites" : "♡ Add to Favorites"}
+        </button>
       </div>
     </div>
   );
-};
+}
 
 export default MovieCard;
